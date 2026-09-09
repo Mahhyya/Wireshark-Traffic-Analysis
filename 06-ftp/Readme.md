@@ -35,7 +35,7 @@ Capture an FTP login and file transfer to show that credentials are sent in clea
 ![FTP login showing USER and PASS commands in cleartext](screenshots/ftp-login.png)
 
 ### Step 5: Inspect the file transfer (data channel)
-13. Filtered with `ftp-data` — found the actual file content moving over a separate data connection.
+13. Filtered with `ftp-data` — or if the ftp-data is not working then look for the data transfer packet> right click> Follow> TCP Stream. found the actual file content moving over a separate data connection.
 
 **Screenshot — FTP data transfer:**
 ![FTP data channel showing the file transfer](screenshots/ftp-data.png)
