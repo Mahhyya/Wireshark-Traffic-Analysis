@@ -7,18 +7,51 @@ Compare a cleartext HTTP request against an encrypted HTTPS/TLS session.
 - Interface: `Wi-Fi` (connected via mobile hotspot)
 
 ## Part A — HTTP (cleartext)
-1. Visited `http://neverssl.com` while capturing on Wi-Fi.
-2. Filtered `http.request or http.response`, used **Follow → HTTP Stream** on the `GET /` request.
-3. Result: the full request and response — headers and body — completely readable in plaintext.
+
+### Step 1: Capture a plain HTTP request
+1. Started a capture on `Wi-Fi`.
+2. Visited `http://neverssl.com` in the browser, then stopped the capture.
+3. Filtered with `http.request or http.response`.
+4. Clicked the `GET /` request → **Follow → TCP Stream** — the full request and response, headers and body, were completely readable in plaintext.
+
+**Screenshot — HTTP stream (plaintext):**
+![Full HTTP request/response in plaintext](screenshots/http-stream.png)
+
+5. Saved as `04a-http.pcapng`.
 
 ## Part B — HTTPS (TLS)
-1. Visited an HTTPS site while capturing fresh on Wi-Fi.
-2. Filtered `tls.handshake`.
-3. **Client Hello** — visible in cleartext, includes the SNI (`server_name` extension) showing the target domain even though the session is about to be encrypted.
-4. **Server Hello** — visible in cleartext, includes the chosen cipher suite.
-5. **Certificate** — this site negotiated **TLS 1.2** (confirmed via the `supported_versions` extension in the Server Hello), so the certificate is sent in cleartext right after the Server Hello. At first glance the certificate data looked like encrypted binary noise — this is actually just DER encoding, not encryption. Drilling down through `Certificates → Certificate → signedCertificate` exposed the readable fields: `subject`, `issuer`, `validity` (notBefore/notAfter).
-6. Re-ran `http.request` on this HTTPS capture — returned **zero results**, directly proving the payload is encrypted and invisible to Wireshark once TLS is active, in contrast to Part A.
-7. Saved both captures.
+
+### Step 2: Capture an HTTPS session
+6. Started a fresh capture on `Wi-Fi`.
+7. Visited an HTTPS site, then stopped the capture.
+8. Filtered with `tls.handshake`.
+
+### Step 3: Client Hello — SNI visible
+9. Clicked the **Client Hello** packet → expanded to the `server_name` extension — the target domain is visible in cleartext even though the session is about to be encrypted.
+
+**Screenshot — Client Hello (SNI):**
+![Client Hello showing the server_name extension](screenshots/client-hello.png)
+
+### Step 4: Server Hello — cipher suite
+10. Clicked the **Server Hello** packet → expanded to see the chosen cipher suite.
+
+**Screenshot — Server Hello (cipher suite):**
+![Server Hello showing the chosen cipher suite](screenshots/server-hello.png)
+
+### Step 5: Certificate — readable in TLS 1.2
+11. Confirmed the site negotiated **TLS 1.2** via the `supported_versions` extension.
+12. Clicked the **Certificate** packet → drilled down through `Certificates → Certificate → signedCertificate` — the raw bytes looked like binary noise at first, but this is just DER encoding, not encryption. Expanding further exposed readable `subject`, `issuer`, and `validity` fields.
+
+**Screenshot — Certificate (subject/issuer readable):**
+![Certificate details showing readable subject and issuer](screenshots/certificate.png)
+
+### Step 6: Confirm the payload is encrypted
+13. Re-ran `http.request` on this same HTTPS capture — returned **zero results**, proving the payload is encrypted and invisible to Wireshark, unlike Part A.
+
+**Screenshot — empty http.request result:**
+![http.request filter returning no results on the HTTPS capture](screenshots/https-no-http.png)
+
+14. Saved as `04b-https.pcapng`.
 
 ## Filters used
 ```
@@ -33,7 +66,11 @@ TLS 1.2 exposes the certificate in cleartext (readable once you expand deep enou
 ## Files
 - `04a-http.pcapng`
 - `04b-https.pcapng`
-- `screenshots/` — HTTP stream (plaintext), Client Hello (SNI), Server Hello (cipher suite), Certificate (subject/issuer)
+- `screenshots/http-stream.png`
+- `screenshots/client-hello.png`
+- `screenshots/server-hello.png`
+- `screenshots/certificate.png`
+- `screenshots/https-no-http.png`
 
 ## Security / networking takeaway
 HTTP exposes everything — headers, cookies, form data — to anyone on the path. HTTPS hides the content but still leaks the domain being visited via SNI, which is why encrypted SNI (ECH) is an active area of development.
