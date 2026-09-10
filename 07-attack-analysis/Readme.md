@@ -27,7 +27,7 @@ Capture and identify the traffic signatures of a port scan, a brute-force login 
 6. Filtered the second capture with `tcp.flags.syn==1 && tcp.flags.ack==0`.
 
 **Screenshot — SYN packet burst (open ports 80, 443 included):**
-![Nmap SYN scan visible as a burst of SYN packets in Wireshark](screenshots/port-scan.png)
+![Nmap SYN scan visible as a burst of SYN packets in Wireshark](screenshots/07a-port-scan.png)
 
 7. Saved as `07a-port-scan.pcapng`.
 
@@ -58,7 +58,7 @@ Running the scan before and after starting Apache showed the scan directly refle
 4. Filtered with `http.request.method == "POST" && http.request.uri contains "login"`.
 
 **Screenshot — repeated login POST requests:**
-![Repeated POST requests to DVWA login with different password values](screenshots/brute-force.png)
+![Repeated POST requests to DVWA login with different password values](screenshots/07b-brute-force.png)
 
 5. Saved as `07b-brute-force.pcapng`.
 
@@ -81,7 +81,7 @@ Each login attempt produced a distinct POST request to the same URI (`login.php`
 5. Stopped the capture, filtered `http.request`, followed the HTTP stream.
 
 **Screenshot — injected payload in the request + dumped data in the response:**
-![HTTP stream showing the SQL injection payload in the URL and multiple dumped user records in the response](screenshots/sql-injection.png)
+![HTTP stream showing the SQL injection payload in the URL and multiple dumped user records in the response](screenshots/07c-sql-injection.png)
 
 6. Saved as `07c-sql-injection.pcapng`.
 
