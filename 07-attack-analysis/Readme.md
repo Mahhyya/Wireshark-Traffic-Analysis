@@ -82,7 +82,7 @@ Each login attempt produced a distinct POST request to the same URI (`login.php`
 
 **Screenshot — injected payload in the request + dumped data in the response:**
 ![HTTP stream showing the SQL injection payload in the URL and multiple dumped user records in the response](screenshots/07c-sql-injection-1.png)
-![HTTP stream showing the SQL injection payload in the URL and multiple dumped user records in the response](screenshots/07c-sql-injection-.png)
+![HTTP stream showing the SQL injection payload in the URL and multiple dumped user records in the response](screenshots/07c-sql-injection.png)
 
 6. Saved as `07c-sql-injection.pcapng`.
 
